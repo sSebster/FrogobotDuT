@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using NetCord.Hosting.Gateway;
+using NetCord.Hosting.Services;
+using NetCord.Hosting.Services.ApplicationCommands;
 
 namespace Frogobot.Core;
 
@@ -15,9 +17,13 @@ internal class Program
 			builder.Configuration.AddUserSecrets<Program>();
 		}
 
-		builder.Services.AddDiscordGateway();
+		builder.Services
+			.AddDiscordGateway()
+			.AddApplicationCommands();
 		
 		var app = builder.Build();
+
+		app.AddModules(typeof(Program).Assembly);
 
 		await app.RunAsync();
 	}
