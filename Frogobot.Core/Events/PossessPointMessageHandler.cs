@@ -1,4 +1,6 @@
-﻿using Frogobot.Data.Services;
+﻿using Frogobot.Core.Utils;
+using Frogobot.Data.Services;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NetCord.Gateway;
@@ -11,6 +13,7 @@ public class PossessPointMessageHandler : IMessageCreateGatewayHandler
 	private readonly IServiceScopeFactory _scopeFactory;
 	private readonly DiscordEmojiOptions _emojiOptions;
 
+	[UsedImplicitly(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature)]
 	public PossessPointMessageHandler(IServiceScopeFactory scopeFactory, IOptions<DiscordEmojiOptions> emojiOptions)
 	{
 		_scopeFactory = scopeFactory;
@@ -19,7 +22,9 @@ public class PossessPointMessageHandler : IMessageCreateGatewayHandler
 
 	public async ValueTask HandleAsync(Message message)
 	{
-		Console.WriteLine($"Message received from {message.Author.Username}");
+		// We don't want to react to our own messages
+		if (message.Author.IsBot) 
+			return;
 		
 		var result = MessageContainsMagicWord(message.Content);
 		
@@ -43,30 +48,28 @@ public class PossessPointMessageHandler : IMessageCreateGatewayHandler
 			await message.AddReactionAsync(EmojiUtils.GetReactionEmojiFrom(_emojiOptions.Anakin));
 	}
 
-	public MessageResult MessageContainsMagicWord(string message)
+	public static MessageResult MessageContainsMagicWord(string message)
 	{
 		var msg = message.ToLowerInvariant();
 		var result = new MessageResult();
 
-		if (msg.Contains("possesslime"))
-		{
+		if (msg.Contains("possesslime") || msg.Contains("posseslime") || msg.Contains("possessslime"))
 			result.ContainsPossessSlime = true;
-		}
+		
+		// We don't want to detect the slime part of possesslime,
+		// And we don't care about putting a slime reaction if it already contains possesslime
 		else if (msg.Contains("slime"))
-		{
 			result.ContainsSlime = true;
-		}
 
 		if (msg.Contains("anakin"))
-		{
 			result.ContainsAnakin = true;
-		}
 
 		return result;
 	}
 
 	public struct MessageResult
 	{
+		/// <summary> Whether the message contains any of the magic words. </summary>
 		public bool HasMatch => ContainsSlime || ContainsPossessSlime || ContainsAnakin;
 		
 		public bool ContainsSlime { get; set; }
