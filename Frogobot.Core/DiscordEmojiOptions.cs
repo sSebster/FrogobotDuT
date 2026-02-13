@@ -1,7 +1,9 @@
-﻿using NetCord.Rest;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Frogobot.Core;
 
+// We disable the get-only check because the emojis need to be set-able for the configuration to work
+[SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
 public class DiscordEmojiOptions
 {
 	public const string SectionName = "DiscordEmoji";
@@ -9,15 +11,4 @@ public class DiscordEmojiOptions
 	public string PossessPoint { get; set; } = "";
 	public string Anakin { get; set; } = "";
 	public string Slime { get; set; } = "";
-	
-	public ReactionEmojiProperties GetReactionEmojiFrom(string emojiName)
-	{
-		emojiName = emojiName.TrimStart('<');
-		emojiName = emojiName.TrimEnd('>');
-		
-		string name = emojiName.Split(':')[1];
-		ulong id = ulong.Parse(emojiName.Split(':')[2]);
-
-		return new ReactionEmojiProperties(name, id);
-	}
 }

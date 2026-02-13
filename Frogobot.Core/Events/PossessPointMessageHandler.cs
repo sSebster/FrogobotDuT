@@ -31,18 +31,16 @@ public class PossessPointMessageHandler : IMessageCreateGatewayHandler
 
 		if (result.ContainsPossessSlime)
 		{
-			await message.AddReactionAsync(_emojiOptions.GetReactionEmojiFrom(_emojiOptions.PossessPoint));
+			await message.AddReactionAsync(EmojiUtils.GetReactionEmojiFrom(_emojiOptions.PossessPoint));
 			await possessPointService.AddPossessPointAsync(message.Author.Id);
 		}
 		else if (result.ContainsSlime)
 		{
-			await message.AddReactionAsync(_emojiOptions.GetReactionEmojiFrom(_emojiOptions.Slime));
+			await message.AddReactionAsync(EmojiUtils.GetReactionEmojiFrom(_emojiOptions.Slime));
 		}
 		
 		if (result.ContainsAnakin)
-		{
-			await message.AddReactionAsync(_emojiOptions.GetReactionEmojiFrom(_emojiOptions.Anakin));
-		}
+			await message.AddReactionAsync(EmojiUtils.GetReactionEmojiFrom(_emojiOptions.Anakin));
 	}
 
 	public MessageResult MessageContainsMagicWord(string message)
