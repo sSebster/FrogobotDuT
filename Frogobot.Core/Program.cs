@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NetCord.Gateway;
 using NetCord.Hosting.Gateway;
 using NetCord.Hosting.Services;
 using NetCord.Hosting.Services.ApplicationCommands;
@@ -34,8 +35,16 @@ internal class Program
 
 		// Discord Bot
 		builder.Services
-			.AddDiscordGateway()
-			.AddApplicationCommands();
+			.AddDiscordGateway(opt =>
+			{
+				opt.Intents = GatewayIntents.GuildMessages
+					| GatewayIntents.DirectMessages
+					| GatewayIntents.MessageContent
+					| GatewayIntents.DirectMessageReactions
+					| GatewayIntents.GuildMessageReactions;
+			})
+			.AddApplicationCommands()
+			.AddGatewayHandlers(typeof(Program).Assembly);
 		
 		var app = builder.Build();
 
