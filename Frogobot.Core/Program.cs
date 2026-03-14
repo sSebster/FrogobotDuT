@@ -48,11 +48,10 @@ internal class Program
 		
 		var app = builder.Build();
 
-		// TODO : temp, replace by migrations later
 		using (var scope = app.Services.CreateScope())
 		{
 			var db = scope.ServiceProvider.GetRequiredService<FrogoContext>();
-			await db.Database.EnsureCreatedAsync();
+			await db.Database.MigrateAsync();
 		}
 
 		app.AddModules(typeof(Program).Assembly);
